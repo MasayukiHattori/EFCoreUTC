@@ -1,0 +1,57 @@
+﻿@page "/todos/add"
+@using EFCoreUTC.Data;
+@using EFCoreUTC.Models;
+@inject TodoService TodoService;
+@inject NavigationManager NavigationManager;
+
+<h1>Add Todo</h1>
+
+<EditForm Model="@_model" OnValidSubmit="SubmitAsync">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="row mb-2">
+            <label for="title" class="col">
+                Title:
+                <InputText x:id="title" @bind-Value="@_model.Title" />
+                <ValidationMessage For="@(()=>_model.Title)" />
+            </label>
+        </div>
+        <div class="row mb-2">
+            <label for="memo" class="col">
+                Memo:
+                <InputText @bind-Value="@_model.Memo" />
+                <ValidationMessage For="@(()=>_model.Memo)" />
+            </label>
+        </div>
+        <div class="row mb-2">
+            <label for="executionDate" class="col">
+                Execution Date:
+                <InputDate Type="InputDateType.DateTimeLocal" @bind-Value:format="yyyy/MM/dd HH:mm:ss" @bind-Value="@_model.ExecutionDate" />
+                <ValidationMessage For="@(()=>_model.ExecutionDate)" />
+            </label>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private Todo _model = new()
+        {
+            ExecutionDate = DateTime.Now
+        };
+
+    private async Task SubmitAsync(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        //Add Todo
+        await TodoService.AddAsync(_model);
+
+        //Navigate to todos
+        NavigationManager.NavigateTo("/todos");
+    }
+}

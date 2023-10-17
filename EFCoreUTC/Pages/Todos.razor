@@ -1,0 +1,44 @@
+﻿@page "/todos"
+@using EFCoreUTC.Data;
+@using EFCoreUTC.Models;
+@inject TodoService TodoService;
+
+<h1>Todos</h1>
+
+@if (todos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="mt-4 mb-4"><a href="/todos/add">Add</a></div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Memo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var todo in todos)
+            {
+                <tr>
+                    <td>@todo.ExecutionDate.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                    <td>@todo.Title</td>
+                    <td>@todo.Memo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<Todo>? todos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        todos = await TodoService.GetTodosAsync();
+    }
+}
